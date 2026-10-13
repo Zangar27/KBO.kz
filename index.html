@@ -171,40 +171,37 @@ const DL=['Дүйсенбі','Сейсенбі','Сәрсенбі','Бейсен
 const ST=['todo','doing','done'],STN={todo:'Істелмеген',doing:'Жасалуда',done:'Дайын'},BD={todo:'Істелмеген',doing:'Жасалуда',done:'Істелген'},PN=['','Қарапайым','Орташа','Маңызды'];
 let user=null,S=null,view='today',am='login',editing=null,fs='',t2='board',tt,wk,hw;
 
-/* ---------- accounts (stored on this device) ---------- */
-const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
-async function hash(p,salt){if(!(window.crypto&&crypto.subtle)){let h=5381;for(const c of salt+p)h=(h*33^c.charCodeAt(0))>>>0;return 'f'+h}const e=new TextEncoder(),k=await crypto.subtle.importKey('raw',e.encode(p),'PBKDF2',false,['deriveBits']);
- return hex(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:e.encode(salt),iterations:100000},k,256))}
-const err=m=>{$('#err').textContent=m},EM='Қате шықты, қайта көр';
-/* cloud sync: db capability (published link, signed in to claude.ai); falls back to this device only */
-let CL=null,ct={};
-const wt=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(()=>r(null),ms))]);
-async function cloud(){if(CL!==null)return CL||null;try{const c=window.claude;if(!c||!c.use){CL=false;return null}const[db,us]=await wt(Promise.all([c.use('db'),c.use('user')]),8000)||[];const id=us&&await us.id();CL=db&&id?{db,id}:false}catch(e){CL=false}return CL||null}
-const cs=m=>{const e=$('#cs');if(e)e.textContent=m};
-function note(){const e=$('#anote');if(e&&CL!==null)e.textContent=CL?'Деректер KBO аккаунтыңа бұлтқа сақталады ✓':'Бұлт қосылмаған: деректер тек осы браузерде сақталады. Сайтты Claude сілтемесі арқылы аш.'}
-async function cget(k){try{const c=await cloud();if(!c){cs('Тек осы браузерде сақталады');return null}
- const[a,b]=await Promise.all([c.db.collection('kbo').doc(k).get(),c.db.collection('data/users/'+c.id).doc(k).get().catch(()=>({exists:false}))]);
- const x=a.exists?a.data():null,y=b.exists?b.data():null;cs('Бұлт қосулы ✓');return x&&y?(y.upd>x.upd?y:x):(x||y)}catch(e){cs('Бұлтқа қосыла алмады');return null}}
-function cput(k,v){clearTimeout(ct[k]);ct[k]=setTimeout(async()=>{try{const c=await cloud();if(!c){cs('Тек осы браузерде сақталады');return}cs('Сақталуда…');await c.db.collection('kbo').doc(k).set(v);cs('Бұлтқа сақталды ✓')}catch(e){cs('Бұлтқа сақталмады: сайтқа жазу рұқсаты керек')}},800)}
-async function pullAcc(){const r=await cget('accounts');if(!r)return;try{const R=JSON.parse(r.json),M={...R,...ld(AK,{})};sv(AK,M);if(Object.keys(M).length>Object.keys(R).length)cput('accounts',{json:JSON.stringify(M),upd:Date.now()})}catch(e){}}
-async function syncIn(u){const r=await cget('d_'+u);if(user!==u)return;
- if(r&&r.upd>(S.upd||0)){try{S=JSON.parse(r.json);sv('kbo.d.'+u,S)}catch(e){}}
- else if(S.upd||S.tasks.length)cput('d_'+u,{json:JSON.stringify(S),upd:S.upd||Date.now()})}
-const ADMIN={u:'admin27',name:'Zangar Mukhtaruly',salt:'kbo-admin27-salt-v1',h:['b92b64541409aba89b2b551217ca6e8fea6bdc30107c8ecf51437b18ff5797e9','f1222607995','c088af06051078f03d16ed0520810dbce4b4d8326fccc33bf7061fabaf93ae1a','f1691358197']};
+/* ---------- Supabase: accounts and data live on the server ---------- */
+const SB_URL='https://hnkfavlbdaxgjxhgiiac.supabase.co',SB_KEY='sb_publishable_JPSf-p3V5dxieO-l8hSA2g_HQp_irgW',SBK='kbo.sb',EM='Қате шықты, қайта көр';
+let SES=ld(SBK,null),pt;
+const em=u=>u+'@kbo.kz',err=m=>{$('#err').textContent=m},cs=m=>{const e=$('#cs');if(e)e.textContent=m};
+const note=()=>{const e=$('#anote');if(e)e.textContent='Аккаунт пен тапсырмалар серверде сақталады: кез келген құрылғыдан кіре аласың.'};
+async function sb(path,o={}){
+ const H={apikey:SB_KEY,'Content-Type':'application/json'};if(o.token)H.Authorization='Bearer '+o.token;if(o.prefer)H.Prefer=o.prefer;
+ const r=await fetch(SB_URL+path,{method:o.method||'GET',headers:H,body:o.body?JSON.stringify(o.body):undefined}),t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(x){}
+ if(!r.ok)throw new Error((j&&(j.msg||j.error_description||j.message||j.error))||('HTTP '+r.status));return j}
+function setSes(j){const u=j.user||{};SES={at:j.access_token,rt:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000-60000,id:u.id,name:(u.user_metadata||{}).name||'',u:(u.email||'').split('@')[0]};sv(SBK,SES)}
+async function tok(){if(!SES)throw new Error('no session');if(Date.now()>SES.exp){const j=await sb('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:SES.rt}});setSes(j)}return SES.at}
+function push(){clearTimeout(pt);pt=setTimeout(async()=>{try{cs('Сақталуда…');const t=await tok();
+ await sb('/rest/v1/kbo_data?on_conflict=user_id',{method:'POST',token:t,prefer:'resolution=merge-duplicates,return=minimal',body:{user_id:SES.id,data:S,updated_at:new Date().toISOString()}});cs('Серверге сақталды ✓')}catch(e){cs('Серверге сақталмады')}},800)}
+async function syncIn(){
+ try{const t=await tok(),r=await sb('/rest/v1/kbo_data?select=data&limit=1',{token:t}),d=r&&r[0]&&r[0].data;
+  if(d&&Array.isArray(d.tasks)&&(d.upd||0)>(S.upd||0)){S=d;sv('kbo.d.'+user,S)}else push();cs('Серверге қосылды ✓')}
+ catch(e){if(!(e instanceof TypeError)&&/jwt|token|session|refresh|expired|no session/i.test(e.message)){SES=null;sv(SBK,null);showAuth()}else cs('Серверге қосыла алмады')}}
+const netErr=x=>x instanceof TypeError?'Интернет қосылымын тексер':x.message;
 async function register(){
- const u=$('#r-u').value.trim().toLowerCase(),n=$('#r-n').value.trim(),p=$('#r-p').value,p2=$('#r-p2').value;await pullAcc();const A=ld(AK,{});let e='';
+ const u=$('#r-u').value.trim().toLowerCase(),n=$('#r-n').value.trim(),p=$('#r-p').value,p2=$('#r-p2').value;let e='';
  if(!/^[a-z0-9_]{3,20}$/.test(u))e='Пайдаланушы аты: 3–20 таңба, тек латын әріптері, сандар және _';
- else if(A[u]||u==ADMIN.u)e='Бұл пайдаланушы аты бос емес';else if(!n)e='Атыңды жаз';
- else if(p.length<6)e='Пароль кемінде 6 таңбадан тұруы керек';else if(p!==p2)e='Парольдер сәйкес емес';
+ else if(!n)e='Атыңды жаз';else if(p.length<6)e='Пароль кемінде 6 таңбадан тұруы керек';else if(p!==p2)e='Парольдер сәйкес емес';
  if(e)return err(e);
- const salt=Array.from({length:8},()=>Math.random().toString(36).slice(2)).join('');
- A[u]={name:n,salt,h:await hash(p,salt)};sv(AK,A);cput('accounts',{json:JSON.stringify(A),upd:Date.now()});start(u);
+ try{const j=await sb('/auth/v1/signup',{method:'POST',body:{email:em(u),password:p,data:{name:n}}});
+  if(!j||!j.access_token)return err('Тіркелді, бірақ Supabase-те «Confirm email» өшірілмеген');setSes(j);start()}
+ catch(x){err(/registered|exists/i.test(x.message)?'Бұл пайдаланушы аты бос емес':netErr(x))}
 }
 async function login(){
- const u=$('#l-u').value.trim().toLowerCase(),p=$('#l-p').value;if(u!=ADMIN.u)await pullAcc();const a=ld(AK,{})[u];
- if(u==ADMIN.u){if(!ADMIN.h.includes(await hash(p,ADMIN.salt)))return err('Пайдаланушы аты немесе пароль қате');return start(u)}
- if(!a||await hash(p,a.salt)!==a.h)return err('Пайдаланушы аты немесе пароль қате');
- start(u);
+ const u=$('#l-u').value.trim().toLowerCase(),p=$('#l-p').value;
+ try{setSes(await sb('/auth/v1/token?grant_type=password',{method:'POST',body:{email:em(u),password:p}}));start()}
+ catch(x){err(x instanceof TypeError?netErr(x):'Пайдаланушы аты немесе пароль қате')}
 }
 function vAuth(){
  const r=am=='reg',f=(id,l,t,ac)=>`<label for="${id}">${l}</label><input id="${id}" type="${t||'text'}" autocomplete="${ac}">`;
@@ -213,19 +210,19 @@ function vAuth(){
  ${r?f('r-u','Пайдаланушы аты','text','username')+f('r-n','Аты','text','given-name')+f('r-p','Пароль','password','new-password')+f('r-p2','Парольді қайталау','password','new-password')
  :f('l-u','Пайдаланушы аты','text','username')+f('l-p','Пароль','password','current-password')}
  <div class="err" id="err" role="alert"></div><button class="btn full" data-a="${r?'reg':'login'}">${r?'Тіркелу':'Кіру'}</button>
- <p class="mute" id="anote" style="margin:14px 0 0">Тексерілуде…</p></div>`;
+ <p class="mute" id="anote" style="margin:14px 0 0"></p></div>`;note();
 }
-function showAuth(){user=null;$('#shell').hidden=true;$('#auth').hidden=false;vAuth();cloud().then(note)}
-async function start(u){
- user=u;sv(SK,u);const a=u==ADMIN.u?{name:ADMIN.name}:ld(AK,{})[u];S=ld('kbo.d.'+u,null);
+function showAuth(){user=null;$('#shell').hidden=true;$('#auth').hidden=false;vAuth()}
+async function start(){
+ user=SES.id;const a={name:SES.name||SES.u};S=ld('kbo.d.'+user,null);
  if(!S||!Array.isArray(S.tasks))S={subs:[{id:'s1',name:'Қазақстан тарихы',color:'#B5532B'},{id:'s2',name:'Математикалық сауаттылық',color:'#2B6CB0'},{id:'s3',name:'Оқу сауаттылығы',color:'#2F855A'},{id:'s4',name:'Информатика',color:'#7A3FC4'},{id:'s5',name:'Математика',color:'#B83280'}],tasks:[]};
  $('#auth').hidden=true;$('#shell').hidden=false;
  $('#uname').textContent=a.name;$('#av').textContent=a.name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
- view='today';wk=mon(today());hw=addD(wk,-7);$('#app').innerHTML='<div class="mute" style="margin-top:30px">Жүктелуде…</div>';await syncIn(u);if(user===u)render();
+ view='today';wk=mon(today());hw=addD(wk,-7);$('#app').innerHTML='<div class="mute" style="margin-top:30px">Жүктелуде…</div>';await syncIn();if(user)render();
 }
 
 /* ---------- dates ---------- */
-const save=()=>{S.upd=Date.now();sv('kbo.d.'+user,S);cput('d_'+user,{json:JSON.stringify(S),upd:S.upd})};
+const save=()=>{S.upd=Date.now();sv('kbo.d.'+user,S);push()};
 const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const today=()=>iso(new Date()),dt=s=>new Date(s+'T12:00'),nowT=()=>new Date().toTimeString().slice(0,5);
 const addD=(s,n)=>{const d=dt(s);d.setDate(d.getDate()+n);return iso(d)};
@@ -482,7 +479,7 @@ document.addEventListener('click',e=>{
  if(a=='am'){am=x;vAuth();note()}else if(a=='reg')register().catch(()=>err(EM));else if(a=='login')login().catch(()=>err(EM))
  else if(a=='menu')menu()
  else if(a=='nav'){view=x;menu(false);render();scrollTo(0,0)}
- else if(a=='out'){menu(false);sv(SK,null);showAuth()}
+ else if(a=='out'){menu(false);SES=null;sv(SBK,null);showAuth()}
  else if(a=='add')openDlg(null,x)
  else if(a=='edit')openDlg(id)
  else if(a=='save')saveTask()
@@ -521,8 +518,7 @@ $('#f-h').innerHTML='<option value="">Сағат</option>'+[...Array(24).keys()]
 const tick=()=>{if(user&&!['subs','timer','take','exam'].includes(view)&&!document.querySelector('dialog[open]'))render()};setInterval(tick,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
 document.querySelectorAll('.hero').forEach(i=>i.src=HERO);
 sec();
-const s0=ld(SK,null);
-if(s0&&(s0==ADMIN.u||ld(AK,{})[s0]))start(s0);else showAuth();
+if(SES)start();else showAuth();
 </script>
 </body>
 </html>
