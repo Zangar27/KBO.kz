@@ -2,7 +2,7 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-46wwvAay6GFmLcZ54ODbnN8ZuqqopXyv/gWGyoO3uTo='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-S1ViDM6lHFnnUn+cNrooA+gZkM2LL5MKfWSIsBpNeys='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
@@ -195,11 +195,11 @@ const netErr=x=>x instanceof TypeError?'Интернет қосылымын те
 async function register(){
  const u=$('#r-u').value.trim().toLowerCase(),n=$('#r-n').value.trim(),p=$('#r-p').value,p2=$('#r-p2').value,c=$('#r-c').value.trim();let e='';
  if(!/^[a-z0-9_]{3,20}$/.test(u))e='Пайдаланушы аты: 3–20 таңба, тек латын әріптері, сандар және _';
- else if(!n)e='Атыңды жаз';else if(p.length<6)e='Пароль кемінде 6 таңбадан тұруы керек';else if(p!==p2)e='Парольдер сәйкес емес';
+ else if(!n)e='Атыңды жаз';else if(p.length<8)e='Пароль кемінде 8 таңбадан тұруы керек';else if(p!==p2)e='Парольдер сәйкес емес';
  if(e)return err(e);
  try{const j=await sb('/auth/v1/signup',{method:'POST',body:{email:em(u),password:p,data:{name:n,code:c}}});
   if(!j||!j.access_token)return err('Тіркелді, бірақ Supabase-те «Confirm email» өшірілмеген');setSes(j);start()}
- catch(x){err(/registered|exists/i.test(x.message)?'Бұл пайдаланушы аты бос емес':/database error|invite|code/i.test(x.message)?'Шақыру коды дұрыс емес немесе біткен':netErr(x))}
+ catch(x){err(/registered|exists/i.test(x.message)?'Бұл пайдаланушы аты бос емес':/password/i.test(x.message)?'Пароль әлсіз: кемінде 8 таңба, кіші және бас әріп, сан керек':/database error|invite|code/i.test(x.message)?'Шақыру коды дұрыс емес немесе біткен':netErr(x))}
 }
 async function login(){
  const u=$('#l-u').value.trim().toLowerCase(),p=$('#l-p').value;
