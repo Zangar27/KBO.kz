@@ -2,7 +2,7 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-S1ViDM6lHFnnUn+cNrooA+gZkM2LL5MKfWSIsBpNeys='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-x40xz2sT7zegnn7W19aKW0KGzcpR8zCpYa6Zt8WQpKU='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
@@ -97,6 +97,10 @@ dialog::backdrop{background:rgba(31,47,92,.4)}
 .opt:hover{border-color:var(--or)}.opt:disabled{color:inherit;opacity:1;cursor:default}.opt.ok{background:#E8F7EE;border-color:var(--ok)}.opt.no{background:#FFF0F0;border-color:var(--late)}
 .g2{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
 .hbar{display:flex;align-items:center;gap:10px;margin-bottom:6px}.hbar .pb{flex:1}.hbar span{min-width:140px;font-size:14px}
+.bars{display:flex;align-items:flex-end;gap:4px;height:130px;margin-top:8px}.bars>div{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:11px;color:var(--mute)}
+.bars i{display:block;width:100%;background:linear-gradient(var(--gold),var(--or));border-radius:4px 4px 0 0;min-height:2px}.bars b{font-size:11px;color:var(--head)}
+.fl{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;font-size:14px}.fl span{flex:1;min-width:0;overflow-wrap:anywhere}
+.ntx{white-space:pre-wrap;overflow-wrap:anywhere}
 @media (max-width:860px){.board{grid-template-columns:1fr}.sum{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:700px){.bar .wrap{grid-template-columns:1fr auto}.hero{height:120px}.bar .c{grid-column:1/-1;grid-row:2;justify-self:center}.who span{display:none}}
 @media (max-width:560px){.week{grid-template-columns:1fr}.col{min-height:0}}
@@ -118,10 +122,12 @@ dialog::backdrop{background:rgba(31,47,92,.4)}
     <button class="nv" data-a="nav" data-x="today">Басты бет</button>
     <button class="nv" data-a="nav" data-x="week">Апталық жоспар</button>
     <button class="nv" data-a="nav" data-x="board">Тапсырмалар</button>
+    <button class="nv" data-a="nav" data-x="notes">Блокнот</button>
     <button class="nv" data-a="nav" data-x="timer">Оқу таймері</button>
     <button class="nv" data-a="nav" data-x="quiz">Квиздер</button>
     <button class="nv" data-a="nav" data-x="mist">Қателер дәптері</button>
     <button class="nv" data-a="nav" data-x="exam">ҰБТ мақсаты</button>
+    <button class="nv" data-a="nav" data-x="stats">Статистика</button>
     <button class="nv" data-a="nav" data-x="subs">Пәндер</button>
     <div class="sp"></div>
     <button class="nv" data-a="out">Шығу</button>
@@ -137,6 +143,7 @@ dialog::backdrop{background:rgba(31,47,92,.4)}
   <label for="f-prio">Маңыздылығы</label>
   <select id="f-prio"><option value="1">Қарапайым (10 XP)</option><option value="2" selected>Орташа (20 XP)</option><option value="3">Маңызды (30 XP)</option></select>
   <label for="f-note">Жазба</label><textarea id="f-note" rows="3"></textarea>
+  <label for="f-up">Файлдар (сурет, PDF, 5 МБ дейін)</label><div id="f-files"></div><input id="f-up" type="file" accept="image/*,.pdf,.txt" multiple><div class="mute" id="f-msg" role="status"></div>
   <div class="acts"><button class="btn" data-a="save">Сақтау</button><button class="btn ghost" data-a="close">Болдырмау</button>
   <button class="btn ghost" id="del" data-a="del" style="margin-left:auto;color:var(--late)">Жою</button></div>
 </dialog>
@@ -160,6 +167,10 @@ D) төртінші нұсқа
 (келесі сұрақты бос жолдан кейін жаз)</pre>
   <div class="err" id="q-e" role="alert"></div>
   <div class="acts"><button class="btn" data-a="qsave">Сақтау</button><button class="btn ghost" data-a="qclose">Болдырмау</button><button class="btn ghost" id="qdel" data-a="qdel" style="margin-left:auto;color:var(--late)">Жою</button></div></dialog>
+<dialog id="dn" aria-labelledby="dnt"><h2 id="dnt" style="margin-top:0">Жазба</h2>
+  <textarea id="n-t" rows="7" aria-label="Жазба мәтіні"></textarea>
+  <label style="display:flex;align-items:center;gap:8px"><input id="n-p" type="checkbox" style="width:auto"> Жоғарыда бекіту</label>
+  <div class="acts"><button class="btn" data-a="nsave">Сақтау</button><button class="btn ghost" data-a="n2t">Тапсырмаға айналдыру</button><button class="btn ghost" data-a="nclose">Болдырмау</button><button class="btn ghost" data-a="ndel" style="margin-left:auto;color:var(--late)">Жою</button></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -248,7 +259,7 @@ function card(t,o){
  return `<div class="card ${done?'done':''} ${ov?'ov':''}" draggable="true" data-id="${t.id}">
  <button class="chk" data-a="chk" data-id="${t.id}" aria-label="${done?'Дайын белгісін алу':'Дайын деп белгілеу'}">${done?'✓':''}</button>
  <div class="b" data-a="edit" data-id="${t.id}" tabindex="0"><div class="t">${esc(t.title)}</div>
- <div class="meta"><span><i class="dot" style="--c:${s.color}"></i><span>${esc(s.name)}</span></span>${o=='w'&&!t.time?'':`<span class="tm ${ov?'ov':''}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>${o=='w'?'':fmt(t.date)+(t.time?', ':'')}${t.time||''}</span></span>`}${o=='h'?`<span class="bd ${t.status}">${BD[t.status]}</span>`:''}</div>${ov?'<div class="dead">ДЕДЛАЙН БІТТІ</div>':''}
+ <div class="meta"><span><i class="dot" style="--c:${s.color}"></i><span>${esc(s.name)}</span></span>${o=='w'&&!t.time?'':`<span class="tm ${ov?'ov':''}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>${o=='w'?'':fmt(t.date)+(t.time?', ':'')}${t.time||''}</span></span>`}${t.files&&t.files.length?`<span>Файл: ${t.files.length}</span>`:''}${o=='h'?`<span class="bd ${t.status}">${BD[t.status]}</span>`:''}</div>${ov?'<div class="dead">ДЕДЛАЙН БІТТІ</div>':''}
  ${o=='mv'?`<div class="mv">${i>0?`<button class="btn ghost sm" data-a="mv" data-x="-1" data-id="${t.id}">← ${STN[ST[i-1]]}</button>`:''}${i<2?`<button class="btn ghost sm" data-a="mv" data-x="1" data-id="${t.id}">${STN[ST[i+1]]} →</button>`:''}</div>`:''}
  </div></div>`;
 }
@@ -293,7 +304,7 @@ function vSubs(){
 }
 function render(){
  ens();
- $('#app').innerHTML={today:vToday,week:vWeek,board:vBoard,subs:vSubs,timer:vTimer,quiz:vQuiz,mist:vMist,exam:vExam,take:vTake}[view]();
+ $('#app').innerHTML={today:vToday,week:vWeek,board:vBoard,subs:vSubs,timer:vTimer,quiz:vQuiz,mist:vMist,exam:vExam,take:vTake,notes:vNotes,stats:vStats}[view]();
  document.querySelectorAll('.wrap').forEach(w=>w.classList.toggle('wide',view=='week'));
  document.querySelectorAll('.nv[data-x]').forEach(b=>b.setAttribute('aria-current',b.dataset.x==(view=='take'?'quiz':view)));
 }
@@ -305,13 +316,13 @@ function openDlg(id,date){
  $('#dt').textContent=t?'Тапсырманы өзгерту':'Жаңа тапсырма';$('#f-title').value=t?t.title:'';
  $('#f-sub').innerHTML=S.subs.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')||'<option value="">Пәнсіз</option>';
  $('#f-sub').value=t?t.subj:(S.subs[0]?S.subs[0].id:'');$('#f-date').value=t?t.date:(date||today());{const [h,m]=(t&&t.time||'').split(':');$('#f-h').value=h||'';$('#f-m').value=m||'00'}
- $('#f-prio').value=t?t.prio:2;$('#f-note').value=t?(t.note||''):'';$('#del').hidden=!t;$('#dlg').showModal();$('#f-title').focus();
+ $('#f-prio').value=t?t.prio:2;$('#f-note').value=t?(t.note||''):'';dF=t&&t.files?t.files.map(x=>({...x})):[];dNew=[];dDel=[];drawF();$('#f-msg').textContent='';$('#del').hidden=!t;$('#dlg').showModal();$('#f-title').focus();
 }
 function saveTask(){
  const title=$('#f-title').value.trim();if(!title){$('#f-title').focus();return}
- const v={title,subj:$('#f-sub').value,date:$('#f-date').value||today(),time:$('#f-h').value?$('#f-h').value+':'+$('#f-m').value:'',prio:+$('#f-prio').value,note:$('#f-note').value.trim()};
+ const v={title,subj:$('#f-sub').value,date:$('#f-date').value||today(),time:$('#f-h').value?$('#f-h').value+':'+$('#f-m').value:'',prio:+$('#f-prio').value,note:$('#f-note').value.trim(),files:dF};
  if(editing)Object.assign(editing,v);else S.tasks.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),status:'todo',doneAt:null,...v});
- $('#dlg').close();save();render();
+ $('#dlg').close();save();render();fdel(dDel);dNew=[];dDel=[];
 }
 function setStatus(t,s){
  if(t.status=='done'&&s!='done')t.doneAt=null;
@@ -355,7 +366,7 @@ function parseQ(x){const qs=[];let bad=0;
    else if(m=l.match(/^([A-Da-d])\s*[).]\s*(.+)/))o.push(m[2]);else if(!o.length)q.push(l)});
   if(q.length&&o.length>1&&a>=0&&a<o.length)qs.push({q:q.join(' '),o,a});else bad++});
  return{qs,bad}}
-function ens(){S.subs.forEach(s=>{if(!/^#[0-9a-fA-F]{6}$/.test(s.color))s.color='#8A93AB'});S.sessions=S.sessions||[];S.mist=S.mist||[];S.quiz=S.quiz||[];S.res=S.res||[];
+function ens(){S.subs.forEach(s=>{if(!/^#[0-9a-fA-F]{6}$/.test(s.color))s.color='#8A93AB'});S.sessions=S.sessions||[];S.notes=S.notes||[];S.mist=S.mist||[];S.quiz=S.quiz||[];S.res=S.res||[];
  S.exam=S.exam||{date:'',rows:[['Қазақстан тарихы',20],['Математикалық сауаттылық',10],['Оқу сауаттылығы',10],['1-бейіндік пән',50],['2-бейіндік пән',50]].map(([n,m])=>({n,m,t:0,c:0}))};
  if(!S.qseed){S.qseed=1;S.quiz.push({id:'q0',title:'Үлгі квиз',subj:'',min:0,src:SAMPLE,qs:parseQ(SAMPLE).qs})}}
 const mmss=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
@@ -459,6 +470,15 @@ function vExam(){
 function extra(a,id,x){
  const R=()=>{save();render()};
  switch(a){
+ case 'fopen':fopen(+x);return true;
+ case 'frm':{const f=dF.splice(+x,1)[0];if(f){if(dNew.includes(f.path)){fdel([f.path]);dNew=dNew.filter(p=>p!==f.path)}else dDel.push(f.path)}drawF();return true}
+ case 'nadd':{const v=$('#n-new').value.trim();if(!v){$('#n-new').focus();return true}S.notes.push({id:'n'+Date.now().toString(36),text:v,date:today(),done:false,pin:false});R();return true}
+ case 'nchk':{const n=S.notes.find(z=>z.id==id);if(n)n.done=!n.done;R();return true}
+ case 'nf':nf=x;render();return true;
+ case 'nedit':openN(id);return true;case 'nclose':$('#dn').close();return true;
+ case 'nsave':{const v=$('#n-t').value.trim();if(!v){$('#n-t').focus();return true}nEd.text=v;nEd.pin=$('#n-p').checked;$('#dn').close();R();return true}
+ case 'ndel':S.notes=S.notes.filter(z=>z!==nEd);$('#dn').close();R();return true;
+ case 'n2t':{const v=$('#n-t').value.trim().split('\n');if(!v[0])return true;S.tasks.push({id:'t'+Date.now().toString(36),title:v[0].slice(0,120),note:v.slice(1).join('\n').trim(),subj:S.subs[0]?S.subs[0].id:'',date:today(),time:'',prio:2,status:'todo',doneAt:null,files:[]});$('#dn').close();R();toast('Тапсырмаға қосылды');return true}
  case 'tmgo':if(tm.run){tm.run=false;tm.left=Math.max(0,Math.ceil((tm.end-Date.now())/1000))}else{tm.end=Date.now()+tm.left*1000;tm.run=true}render();return true;
  case 'tmrs':tm.run=false;tm.phase='w';tm.left=tm.w*60;render();return true;
  case 'madd':openM();return true;case 'medit':openM(id);return true;case 'msave':saveM();return true;case 'mclose':$('#dm').close();return true;
@@ -476,6 +496,45 @@ function extra(a,id,x){
  }
  return false}
 
+/* ---------- files, notebook, statistics ---------- */
+let dF=[],dNew=[],dDel=[],nf='',nEd=null;const BKT='kbo-files';
+const fsz=n=>n>1048576?(n/1048576).toFixed(1)+' МБ':Math.max(1,Math.round(n/1024))+' КБ';
+function drawF(){const b=$('#f-files');if(b)b.innerHTML=dF.map((f,i)=>`<div class="fl"><span>${esc(f.name)} (${fsz(f.size)})</span><button class="btn ghost sm" data-a="fopen" data-x="${i}">Ашу</button><button class="btn ghost sm" data-a="frm" data-x="${i}">Жою</button></div>`).join('')}
+async function upFiles(fs){const m=$('#f-msg');
+ for(const f of fs){if(f.size>5242880){m.textContent=f.name+': 5 МБ-тан үлкен';continue}
+  try{m.textContent='Жүктелуде: '+f.name;const t=await tok(),path=SES.id+'/'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)+'-'+f.name.replace(/[^\w.\-]+/g,'_');
+   const r=await fetch(SB_URL+'/storage/v1/object/'+BKT+'/'+path,{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+t,'Content-Type':f.type||'application/octet-stream'},body:f});
+   if(!r.ok)throw new Error(r.status);dF.push({path,name:f.name,size:f.size});dNew.push(path);m.textContent=''}
+  catch(e){m.textContent='Жүктелмеді: '+f.name+' (файл түрі немесе Storage баптауы)'}}
+ drawF()}
+async function fdel(ps){if(!ps.length)return;try{const t=await tok();await Promise.all(ps.map(p=>fetch(SB_URL+'/storage/v1/object/'+BKT+'/'+p,{method:'DELETE',headers:{apikey:SB_KEY,Authorization:'Bearer '+t}})))}catch(e){}}
+async function fopen(i){const f=dF[i],w=window.open('about:blank','_blank');
+ try{const t=await tok(),j=await sb('/storage/v1/object/sign/'+BKT+'/'+f.path,{method:'POST',token:t,body:{expiresIn:300}});if(w){w.opener=null;w.location.href=SB_URL+'/storage/v1'+j.signedURL}}
+ catch(e){if(w)w.close();toast('Файл ашылмады')}}
+function vNotes(){
+ const l=S.notes.filter(n=>!nf||(nf=='open'?!n.done:n.done)).sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
+ return `<h1>Блокнот</h1><div class="pn"><label for="n-new" style="margin-top:0">Жаңа жазба немесе қосымша тапсырма</label><textarea id="n-new" rows="3"></textarea><div class="acts"><button class="btn" data-a="nadd">Қосу</button></div></div>
+ <div class="bar2"><div class="seg"><button data-a="nf" data-x="" aria-current="${nf==''}">Барлығы</button><button data-a="nf" data-x="open" aria-current="${nf=='open'}">Орындалмаған</button><button data-a="nf" data-x="done" aria-current="${nf=='done'}">Орындалған</button></div></div>
+ ${l.map(n=>`<div class="card ${n.done?'done':''}"><button class="chk" data-a="nchk" data-id="${n.id}" aria-label="${n.done?'Белгіні алу':'Орындалды деп белгілеу'}">${n.done?'✓':''}</button><div class="b" data-a="nedit" data-id="${n.id}" tabindex="0"><div class="t ntx">${esc(n.text)}</div><div class="meta"><span>${dmy(n.date)}</span>${n.pin?'<span>Бекітілген</span>':''}</div></div></div>`).join('')||'<div class="empty">Жазба жоқ</div>'}`;
+}
+function openN(id){nEd=S.notes.find(n=>n.id==id);if(!nEd)return;$('#n-t').value=nEd.text;$('#n-p').checked=!!nEd.pin;$('#dn').showModal();$('#n-t').focus()}
+function bars(v,lab,tt){const m=Math.max(1,...v);return `<div class="bars">${v.map((x,i)=>`<div title="${esc(tt[i])}: ${x}"><b>${x||''}</b><i style="height:${Math.round(x/m*80)}px"></i><span>${lab[i]}</span></div>`).join('')}</div>`}
+function vStats(){
+ const t0=today(),T=S.tasks,D=T.filter(t=>t.status=='done'),late=T.filter(over),pc=T.length?Math.round(D.length/T.length*100):0;
+ const days=[];for(let i=13;i>=0;i--)days.push(addD(t0,-i));
+ const ds=[...new Set(D.map(t=>t.doneAt).filter(Boolean))].sort();let best=0,run=0,pv=null;ds.forEach(d=>{run=pv&&addD(pv,1)==d?run+1:1;best=Math.max(best,run);pv=d});
+ const wd=[0,0,0,0,0,0,0];D.forEach(t=>{if(t.doneAt)wd[(dt(t.doneAt).getDay()+6)%7]++});
+ const dl=days.map(d=>dt(d).getDate()),dn=days.map(fmt),st=stats(),w0=mon(t0);
+ const rs=S.res.slice(-5).reverse(),mr=S.mist.filter(m=>m.st=='repeat').length;
+ return `<h1>Статистика</h1><div class="sum"><div><b>${T.length}</b><span>Барлық тапсырма</span></div><div><b>${pc}%</b><span>Орындалған</span></div><div><b>${late.length}</b><span>Дедлайн біткен</span></div><div><b>${Math.max(best,st.streak)}</b><span>Ең ұзақ серия, күн</span></div></div>
+ <h2>Соңғы 14 күнде орындалған тапсырмалар</h2><div class="pn">${bars(days.map(d=>D.filter(t=>t.doneAt==d).length),dl,dn)}</div>
+ <h2>Оқу уақыты, минут (соңғы 14 күн)</h2><div class="pn">${bars(days.map(d=>S.sessions.filter(s=>s.date==d).reduce((a,s)=>a+s.min,0)),dl,dn)}<div class="mute" style="margin-top:6px">Осы аптада: ${S.sessions.filter(s=>s.date>=w0).reduce((a,s)=>a+s.min,0)} мин</div></div>
+ <h2>Пәндер бойынша</h2><div class="pn">${S.subs.map(s=>{const a=T.filter(t=>t.subj==s.id),d=a.filter(t=>t.status=='done').length;return `<div class="hbar"><span>${esc(s.name)}</span><div class="pb"><b style="width:${a.length?d/a.length*100:0}%"></b></div><span style="min-width:60px">${d} / ${a.length}</span></div>`}).join('')||'<div class="mute">Пән жоқ</div>'}</div>
+ <h2>Апта күндері бойынша орындалғаны</h2><div class="pn">${bars(wd,DL.map(x=>x.slice(0,2)),DL)}</div>
+ <h2>Квиз нәтижелері</h2><div class="pn">${rs.map(r=>{const q=S.quiz.find(z=>z.id==r.qid);return `<div class="hbar"><span>${esc(q?q.title:'Квиз')}</span><div class="pb"><b style="width:${Math.round(r.s/r.n*100)}%"></b></div><span style="min-width:90px">${r.s}/${r.n}, ${dmy(r.date)}</span></div>`}).join('')||'<div class="mute">Әзірше квиз өтілмеген</div>'}</div>
+ <h2>Қателер дәптері</h2><div class="pn">Қайталау керек: <b>${mr}</b>, меңгерілген: <b>${S.mist.length-mr}</b></div>`;
+}
+
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-a]');if(!b)return;
@@ -487,8 +546,8 @@ document.addEventListener('click',e=>{
  else if(a=='add')openDlg(null,x)
  else if(a=='edit')openDlg(id)
  else if(a=='save')saveTask()
- else if(a=='close')$('#dlg').close()
- else if(a=='del'){S.tasks=S.tasks.filter(z=>z!==editing);$('#dlg').close();save();render()}
+ else if(a=='close'){$('#dlg').close();fdel(dNew);dNew=[];dDel=[]}
+ else if(a=='del'){fdel((editing.files||[]).map(f=>f.path).concat(dNew));S.tasks=S.tasks.filter(z=>z!==editing);$('#dlg').close();save();render()}
  else if(a=='chk'&&t){setStatus(t,t.status=='done'?'todo':'done');save();render()}
  else if(a=='mv'&&t){setStatus(t,ST[Math.max(0,Math.min(2,ST.indexOf(t.status)+(+x)))]);save();render()}
  else if(a=='wk'){wk=x=='0'?mon(today()):addD(wk,+x);render()}
@@ -510,6 +569,7 @@ document.addEventListener('change',e=>{const g=e.target,i=g.id;
  else if(i=='tm-s')tm.subj=g.value;
  else if(i=='tm-w'||i=='tm-b'){tm[i=='tm-w'?'w':'b']=Math.max(1,Math.min(180,+g.value||25));if(!tm.run&&((i=='tm-w')==(tm.phase=='w')))tm.left=tm[tm.phase]*60;render()}
  else if(i=='ex-d'){S.exam.date=g.value;save();render()}
+ else if(i=='f-up'){upFiles([...g.files]);g.value=''}
  else if(g.classList&&g.classList.contains('ex')){const r=S.exam.rows[+g.dataset.i],k=g.dataset.k;r[k]=k=='n'?g.value:Math.max(0,+g.value||0);save();render()}});
 document.addEventListener('dragstart',e=>{const c=e.target.closest&&e.target.closest('.card');if(c)e.dataTransfer.setData('text/plain',c.dataset.id)});
 document.addEventListener('dragover',e=>{const c=e.target.closest&&e.target.closest('.col');if(c){e.preventDefault();document.querySelectorAll('.dz').forEach(x=>x!==c&&x.classList.remove('dz'));c.classList.add('dz')}});
@@ -519,7 +579,7 @@ document.addEventListener('drop',e=>{
 });
 document.addEventListener('dragend',()=>document.querySelectorAll('.dz').forEach(x=>x.classList.remove('dz')));
 $('#f-h').innerHTML='<option value="">Сағат</option>'+[...Array(24).keys()].map(h=>`<option>${String(h).padStart(2,'0')}</option>`).join('');$('#f-m').innerHTML=[...Array(60).keys()].map(m=>`<option>${String(m).padStart(2,'0')}</option>`).join('');
-const tick=()=>{if(user&&!['subs','timer','take','exam'].includes(view)&&!document.querySelector('dialog[open]'))render()};setInterval(tick,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+const tick=()=>{if(user&&!['subs','timer','take','exam','notes'].includes(view)&&!document.querySelector('dialog[open]'))render()};setInterval(tick,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
 document.querySelectorAll('.hero').forEach(i=>i.src=HERO);
 sec();
 if(SES)start();else showAuth();
