@@ -2,7 +2,7 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-A0Z9VoucWrQDkVrf+T8Hri0FzrrJBgVbHRga7FeR484='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; media-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-/gMJLBK/cZcriUIi9+1T63y17Y0XG8Bpn8rUzhGN9rI='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; media-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -614,7 +614,15 @@ const PLANS={mat4:{name:'Математика: 4 апталық жоспар',su
 ['Кері тригонометриялық функциялар – 1-бөлім','Кері тригонометриялық функциялар – 2-бөлім'],['Тригонометриялық теңдеулер 1-бөлім','Тригонометриялық теңдеулер 2-бөлім'],
 ['Тригонометриялық теңдеулер 3-бөлім','Тригонометриялық теңдеулер 4-бөлім'],['Тригонометриялық теңдеулер жүйесі','Тригонометриялық теңсіздіктер'],
 ['Тригонометриялық теңсіздіктер 2-бөлім','Тригонометриялық теңсіздіктер 3-бөлім'],['Тригонометриялық теңсіздіктер жүйесі','Бос уақыт: қалып қойған жерді жап немесе қиын тақырыпты қайтала'],
-'Соңғы қайталау: бүкіл курстағы ең қиын 10 есепті қайта шығар. Ағымдағы курс тапсырмаларына қайт (~1 сағ)']}};
+'Соңғы қайталау: бүкіл курстағы ең қиын 10 есепті қайта шығар. Ағымдағы курс тапсырмаларына қайт (~1 сағ)']},
+fx2:{name:'Математика: функция, туынды, интеграл (2 апталық)',subj:'Математика',info:'2 апта, 14 күн, 25 тақырып: күніне 2 тақырып, 7-күні қайталау, соңғы күні қорытынды қайталау',days:[
+['Функция ұғымы','Функцияның анықталу облысы'],['Функцияның мәндер жиыны','Кері функция'],['Функцияның жұп және тақтылығы','Функцияның периодтылығы'],
+['Функциялардың графиктері','Функциялардың графиктері 2-бөлім'],['Туынды ұғымы','Туынды 2-бөлім'],['Туынды 3-бөлім','Туындының физикалық мағынасы'],
+'Демалыс / қайталау: функция мен туындының басын қайта қарап шық, қателескен есептерді қайта шығар. Жаңа тақырып жоқ (~1 сағ)',
+['Туындының геометриялық мағынасы (жанама теңдеуі)','Функцияны зерттеу'],['Функцияны зерттеу 2-бөлім','Функцияның ең кіші және үлкен мәндері'],
+['Интеграл','Алғашқы функция'],['Алғашқы функция 2-бөлім','Айнымалыны ауыстыру әдісі'],['Анықталған интеграл','Бөліктеп интегралдау'],
+['Интегралдың геометриялық мағынасы','Интегралдың геометриялық мағынасы 2-бөлім'],
+['Интеграл соңы (Қоштасу)','Қорытынды қайталау: бүкіл курстағы ең қиын есептерді қайта шығар (~1 сағ)']]}};
 let plD='';
 const nmon=()=>addD(today(),(8-dt(today()).getDay())%7);
 function addPlan(k,start){
@@ -622,7 +630,7 @@ function addPlan(k,start){
  S.tasks=S.tasks.filter(t=>t.plan!=k);let n=0;
  P.days.forEach((d,i)=>{const date=addD(start,i),rest=!Array.isArray(d);
   (rest?[d]:d).forEach(x=>{const[title,ex]=x.split('|');
-   S.tasks.push({id:'p'+Date.now().toString(36)+(n++),title,subj:sb.id,date,time:'',prio:rest?(i==27?3:1):2,status:'todo',doneAt:null,
+   S.tasks.push({id:'p'+Date.now().toString(36)+(n++),title,subj:sb.id,date,time:'',prio:rest?(i==P.days.length-1?3:1):2,status:'todo',doneAt:null,
     note:(Math.floor(i/7)+1)+'-апта, '+(i+1)+'-күн. '+(rest?'':'Видео/конспект 15–20 мин, 5–7 есеп шығар, шыға алмағанын белгіле. ')+(ex||''),files:[],plan:k})})});
  save();return n}
 function vPlans(){
