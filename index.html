@@ -2,7 +2,7 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-/gMJLBK/cZcriUIi9+1T63y17Y0XG8Bpn8rUzhGN9rI='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; media-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-J4XSsDTxfdQLPfPoB1u2clM/DNXxoC5idCpU8OYSVgs='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; media-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -540,7 +540,7 @@ function extra(a,id,x){
  case 'nsave':{const v=$('#n-t').value.trim();if(!v){$('#n-t').focus();return true}nEd.text=v;nEd.pin=$('#n-p').checked;$('#dn').close();R();return true}
  case 'ndel':S.notes=S.notes.filter(z=>z!==nEd);$('#dn').close();R();return true;
  case 'n2t':{const v=$('#n-t').value.trim().split('\n');if(!v[0])return true;S.tasks.push({id:'t'+Date.now().toString(36),title:v[0].slice(0,120),note:v.slice(1).join('\n').trim(),subj:S.subs[0]?S.subs[0].id:'',date:today(),time:'',prio:2,status:'todo',doneAt:null,files:[]});$('#dn').close();R();toast('Тапсырмаға қосылды');return true}
- case 'plan':{const d=$('#pl-d').value||nmon();plD=d;const n=addPlan(x,d);view='week';wk=mon(d);render();toast(n+' тапсырма қосылды');return true}
+ case 'plan':{const d=$('#pl-d-'+x).value||nmon();plD=d;const n=addPlan(x,d);view='week';wk=mon(d);render();toast(n+' тапсырма қосылды');return true}
  case 'unplan':S.tasks=S.tasks.filter(t=>t.plan!=x);R();return true;
  case 'snd':beep();return true;
  case 'theme':{const r=document.documentElement,d=(r.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))=='dark';r.dataset.theme=d?'light':'dark';sv('kbo.theme',r.dataset.theme);return true}
@@ -637,7 +637,7 @@ function vPlans(){
  return `<h1>Дайын жоспарлар</h1>${Object.keys(PLANS).map(k=>{const P=PLANS[k],c=S.tasks.filter(t=>t.plan==k),dn=c.filter(t=>t.status=='done').length;
  return `<div class="pn"><h2 style="margin-top:0">${esc(P.name)}</h2><div class="mute">${esc(P.info)}</div>
  ${c.length?`<div class="mute" style="margin-top:8px">Жоспарда: ${c.length} тапсырма, орындалған: ${dn}</div>`:''}
- <div style="max-width:260px"><label for="pl-d">Басталатын күні (Дүйсенбі ұсынылады)</label><input id="pl-d" type="date" value="${plD||nmon()}"></div>
+ <div style="max-width:260px"><label for="pl-d-${k}">Басталатын күні (Дүйсенбі ұсынылады)</label><input id="pl-d-${k}" type="date" value="${plD||nmon()}"></div>
  <div class="acts"><button class="btn" data-a="plan" data-x="${k}">${c.length?(dn?'Қайта қосу (орындалғандар өшеді)':'Қайта қосу'):'Жоспарға қосу'}</button>${c.length?`<button class="btn ghost" data-a="unplan" data-x="${k}" style="color:var(--late)">Жоспарды жою</button>`:''}</div></div>`}).join('')}`;
 }
 
