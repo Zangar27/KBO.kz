@@ -2,7 +2,7 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-RU/3QNq4NyvAA+2PrnVopXkvaOjhQnyDBH9RyKKnwwM='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; media-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-sXs3TKTG2gYFDMP3HW6u+B6UsjI9RvH0f+jzVqbNMGQ='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; media-src data:; connect-src https://hnkfavlbdaxgjxhgiiac.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -201,6 +201,19 @@ dialog[open]::backdrop{animation:fade .18s ease}
 .sw{display:flex;gap:8px;flex-wrap:wrap}.sw button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
 .sw button[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 2px var(--card) inset}
 input:disabled{opacity:.6;cursor:not-allowed}
+
+/* ===== v4: no-copy, profile popup ===== */
+html{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable],.ntx{-webkit-user-select:text;user-select:text}
+img{-webkit-user-drag:none;user-drag:none}
+.av{background:linear-gradient(135deg,#FF8A3D,#F2580A)}
+.rr{position:relative}
+.wm{position:absolute;top:calc(100% + 8px);right:0;width:280px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 32px rgba(0,0,0,.3);padding:8px;z-index:30;animation:pop .16s ease}
+.wmh{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.wmh .av{width:48px;height:48px;font-size:18px;flex:none}.wmh b{font-size:16px;color:var(--head);overflow-wrap:anywhere}
+.wmi{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border:0;border-radius:12px;background:none;color:var(--ink);font:700 15px "PT Sans",sans-serif;cursor:pointer;text-align:left}
+.wmi:hover{background:var(--sel)}
+.wmi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 </style>
 </head>
 <body>
@@ -209,7 +222,7 @@ input:disabled{opacity:.6;cursor:not-allowed}
   <div class="bar"><div class="wrap">
     <div class="l"><button class="ib" data-a="menu" aria-label="Мәзірді ашу"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div class="logo">KBO.KZ</div></div>
     <div class="c"><img class="hero" alt="Ыбырай Алтынсарин: Кел, балалар, оқылық!"></div>
-    <div class="r"><div class="clk" title="Бүгінгі күннің аяқталуына дейін">Күн аяқталуына <b id="clk">--:--:--</b></div><div class="mute" id="cs" style="font-size:12px"></div><div class="rr"><button class="ib" data-a="theme" aria-label="Күндізгі / түнгі режим" title="Күндізгі / түнгі режим"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg></button><button class="btn" data-a="add">+ Тапсырма</button><div class="who" data-a="nav" data-x="prof" role="button" tabindex="0" title="Профиль"><div class="av" id="av"></div><span id="uname"></span></div></div></div>
+    <div class="r"><div class="clk" title="Бүгінгі күннің аяқталуына дейін">Күн аяқталуына <b id="clk">--:--:--</b></div><div class="mute" id="cs" style="font-size:12px"></div><div class="rr"><button class="btn" data-a="add">+ Тапсырма</button><div class="who" data-a="wm" role="button" tabindex="0" aria-haspopup="menu" aria-expanded="false" title="Профиль"><div class="av" id="av"></div><span id="uname"></span></div><div id="wm" class="wm" role="menu" hidden><div class="wmh"><div class="av" id="wav"></div><b id="wnm"></b></div><button class="wmi" role="menuitem" data-a="nav" data-x="prof"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>Профильді өңдеу</button><button class="wmi" role="menuitem" data-a="nav" data-x="sett"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Баптаулар</button><button class="wmi" role="menuitem" data-a="out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M16 8l4 4-4 4M20 12H9"/></svg>Шығу</button></div></div></div>
   </div></div>
   <div class="wrap"><main id="app" style="padding-bottom:64px"></main></div>
   <div id="ov" data-a="menu"></div>
@@ -228,6 +241,7 @@ input:disabled{opacity:.6;cursor:not-allowed}
     <button class="nv" data-a="nav" data-x="subs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg>Пәндер</button>
     <div class="sec">ЖЕКЕ</div>
     <button class="nv" data-a="nav" data-x="prof"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>Профиль</button>
+    <button class="nv" data-a="nav" data-x="sett"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Баптаулар</button>
     <div class="sp"></div>
     <button class="nv" data-a="out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M16 8l4 4-4 4M20 12H9"/></svg>Шығу</button>
   </aside>
@@ -289,19 +303,48 @@ let user=null,S=null,view='today',am='login',editing=null,fs='',t2='board',tt,wk
 const SB_URL='https://hnkfavlbdaxgjxhgiiac.supabase.co',SB_KEY='sb_publishable_JPSf-p3V5dxieO-l8hSA2g_HQp_irgW',SBK='kbo.sb',EM='Қате шықты, қайта көр';
 let SES=ld(SBK,null),pt,fails=0,lock=0;
 const em=u=>u+'@kbo.kz',err=m=>{$('#err').textContent=m},cs=m=>{const e=$('#cs');if(e)e.textContent=m};
-const note=()=>{const e=$('#anote');if(e)e.textContent='Аккаунт пен тапсырмалар серверде сақталады: кез келген құрылғыдан кіре аласың.'};
+const note=()=>{const e=$('#anote');if(e)e.textContent=''};
 async function sb(path,o={}){
  const H={apikey:SB_KEY,'Content-Type':'application/json'};if(o.token)H.Authorization='Bearer '+o.token;if(o.prefer)H.Prefer=o.prefer;
  const r=await fetch(SB_URL+path,{method:o.method||'GET',headers:H,body:o.body?JSON.stringify(o.body):undefined}),t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(x){}
  if(!r.ok)throw new Error((j&&(j.msg||j.error_description||j.message||j.error))||('HTTP '+r.status));return j}
 function setSes(j){const u=j.user||{};SES={at:j.access_token,rt:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000-60000,id:u.id,name:(u.user_metadata||{}).name||'',u:(u.email||'').split('@')[0]};sv(SBK,SES)}
 async function tok(){if(!SES)throw new Error('no session');if(Date.now()>SES.exp){const j=await sb('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:SES.rt}});setSes(j)}return SES.at}
-function push(){clearTimeout(pt);pt=setTimeout(async()=>{try{cs('Сақталуда…');const t=await tok();
- await sb('/rest/v1/kbo_data?on_conflict=user_id',{method:'POST',token:t,prefer:'resolution=merge-duplicates,return=minimal',body:{user_id:SES.id,data:S,updated_at:new Date().toISOString()}});cs('Серверге сақталды ✓')}catch(e){cs('Серверге сақталмады')}},800)}
+let synced=false,dirty=false,ver=0,base=0,rt,ft;
+const dk=()=>'kbo.dirty.'+user,bk=()=>'kbo.base.'+user;
+const lsSet=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+function bak(why){lsSet('kbo.bak.'+user,JSON.stringify({t:Date.now(),why,data:S}))}
+function merge(a,b){
+ const o=Object.assign({},b,a);
+ ['tasks','notes','mist','quiz','subs'].forEach(k=>{const m=new Map((b[k]||[]).map(x=>[x.id,x]));(a[k]||[]).forEach(x=>m.set(x.id,x));o[k]=[...m.values()]});
+ ['sessions','res'].forEach(k=>{const seen=new Set(),out=[];[...(b[k]||[]),...(a[k]||[])].forEach(x=>{const j=JSON.stringify(x);if(!seen.has(j)){seen.add(j);out.push(x)}});o[k]=out});
+ o.profile=Object.assign({},b.profile,a.profile);return o}
+function push(){ver++;dirty=true;lsSet(dk(),'1');clearTimeout(pt);
+ if(!synced){cs('Серверге қосылмаған: өзгерістер құрылғыда');return}pt=setTimeout(flush,800)}
+async function flush(){
+ if(!dirty||!synced||!SES)return;const v=ver;
+ try{cs('Сақталуда…');const t=await tok(),r=await sb('/rest/v1/kbo_data?select=data&limit=1',{token:t}),d=r&&r[0]&&r[0].data;
+  if(d&&Array.isArray(d.tasks)&&(d.upd||0)>base){bak('conflict');S=merge(S,d);S.upd=Date.now();sv('kbo.d.'+user,S);
+   if(!document.querySelector('dialog[open]'))render();toast('Басқа құрылғыдағы өзгерістер біріктірілді')}
+  const up=S.upd||0;
+  await sb('/rest/v1/kbo_data?on_conflict=user_id',{method:'POST',token:t,prefer:'resolution=merge-duplicates,return=minimal',body:{user_id:SES.id,data:S,updated_at:new Date().toISOString()}});
+  base=up;lsSet(bk(),String(up));if(ver==v){dirty=false;lsSet(dk(),null)}cs('Серверге сақталды ✓')}
+ catch(e){cs('Серверге сақталмады');clearTimeout(ft);ft=setTimeout(flush,15000)}}
+function retry(){clearTimeout(rt);if(!SES||synced)return;rt=setTimeout(()=>syncIn().then(ok=>{if(ok&&!document.querySelector('dialog[open]'))render()}),15000)}
 async function syncIn(){
- try{const t=await tok(),r=await sb('/rest/v1/kbo_data?select=data&limit=1',{token:t}),d=r&&r[0]&&r[0].data;
-  if(d&&Array.isArray(d.tasks)&&(d.upd||0)>(S.upd||0)){S=d;sv('kbo.d.'+user,S)}else push();cs('Серверге қосылды ✓')}
- catch(e){if(!(e instanceof TypeError)&&/jwt|token|session|refresh|expired|no session/i.test(e.message)){SES=null;sv(SBK,null);showAuth()}else cs('Серверге қосыла алмады')}}
+ try{const t=await tok(),r=await sb('/rest/v1/kbo_data?select=data&limit=1',{token:t}),d=r&&r[0]&&r[0].data,has=!!(d&&Array.isArray(d.tasks)),srv=has?(d.upd||0):0,loc=S.upd||0;
+  let pb=0;try{pb=+localStorage.getItem(bk())||0}catch(e){}
+  let go=false;
+  if(!has)go=true;
+  else if(srv==pb&&pb>0)go=dirty||loc>srv;
+  else if(!dirty&&srv>loc){S=d;sv('kbo.d.'+user,S)}
+  else if(srv!=loc||dirty){bak('sync');S=merge(S,d);S.upd=Date.now();sv('kbo.d.'+user,S);go=true}
+  base=srv;lsSet(bk(),String(srv));synced=true;if(go)push();else cs('Серверге қосылды ✓');return true}
+ catch(e){if(!(e instanceof TypeError)&&/jwt|token|session|refresh|expired|no session/i.test(e.message)){SES=null;sv(SBK,null);showAuth()}
+  else{cs('Серверге қосыла алмады: өзгерістер құрылғыда');retry()}return false}}
+addEventListener('online',()=>{if(user&&SES&&!synced)syncIn().then(ok=>{if(ok&&!document.querySelector('dialog[open]'))render()})});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(pt);flush()}else if(user&&SES&&!synced)syncIn().then(ok=>{if(ok&&!document.querySelector('dialog[open]'))render()})});
+addEventListener('pagehide',()=>{clearTimeout(pt);flush()});
 const netErr=x=>x instanceof TypeError?'Интернет қосылымын тексер':x.message;
 async function register(){
  const u=$('#r-u').value.trim().toLowerCase(),n=$('#r-n').value.trim(),p=$('#r-p').value,p2=$('#r-p2').value,c=$('#r-c').value.trim();let e='';
@@ -329,7 +372,7 @@ function vAuth(){
 }
 function showAuth(){user=null;$('#shell').hidden=true;$('#auth').hidden=false;vAuth()}
 async function start(){
- user=SES.id;const a={name:SES.name||SES.u};S=ld('kbo.d.'+user,null);
+ user=SES.id;synced=false;ver=0;base=0;clearTimeout(pt);clearTimeout(rt);clearTimeout(ft);try{dirty=!!localStorage.getItem(dk())}catch(e){dirty=false}const a={name:SES.name||SES.u};S=ld('kbo.d.'+user,null);
  if(!S||!Array.isArray(S.tasks))S={subs:[{id:'s1',name:'Қазақстан тарихы',color:'#B5532B'},{id:'s2',name:'Математикалық сауаттылық',color:'#2B6CB0'},{id:'s3',name:'Оқу сауаттылығы',color:'#2F855A'},{id:'s4',name:'Информатика',color:'#7A3FC4'},{id:'s5',name:'Математика',color:'#B83280'}],tasks:[]};
  $('#auth').hidden=true;$('#shell').hidden=false;
  $('#uname').textContent=a.name;$('#av').textContent=a.name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
@@ -389,7 +432,7 @@ function vWeek(){
   const dn=ts.filter(t=>t.status=='done').length,pc=ts.length?Math.round(dn/ts.length*100):0;
   cols+=`<div class="col ${d==t0?'today':''} ${i>4?'we':''}" data-date="${d}"><div class="ch"><div><div class="dn">${DL[i]}</div><div class="mute">${fmt(d)}${d==t0?', бүгін':''}</div></div><div class="cnt">${dn}/${ts.length}</div></div>
   <div class="pb"><b style="width:${pc}%"></b></div>${ts.map(t=>card(t,'w')).join('')}<button class="addb" data-a="add" data-x="${d}">+ Тапсырма қосу</button></div>`}
- return `<h1>Апталық жоспар</h1>${nav('wk',wk,addD(wk,6))}${tiles(all)}<div class="mute" style="margin-top:12px">Тапсырманы басқа күнге сүйреп апаруға болады. Барлық тапсырмалар «Тапсырмалар» бөлімімен автоматты түрде бірге жүреді.</div><div class="week">${cols}</div>`;
+ return `<h1>Апталық жоспар</h1>${nav('wk',wk,addD(wk,6))}${tiles(all)}<div class="week">${cols}</div>`;
 }
 function vHist(){
  const e=addD(hw,6),ts=S.tasks.filter(t=>t.date>=hw&&t.date<=e&&(!fs||t.subj==fs)).sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'').localeCompare(b.time||''));
@@ -409,7 +452,7 @@ function vSubs(){
 }
 function render(){
  ens();applyProfile();
- $('#app').innerHTML={today:vToday,week:vWeek,board:vBoard,subs:vSubs,timer:vTimer,quiz:vQuiz,mist:vMist,exam:vExam,take:vTake,notes:vNotes,stats:vStats,plans:vPlans,prof:vProf}[view]();
+ $('#app').innerHTML={today:vToday,week:vWeek,board:vBoard,subs:vSubs,timer:vTimer,quiz:vQuiz,mist:vMist,exam:vExam,take:vTake,notes:vNotes,stats:vStats,plans:vPlans,prof:vProf,sett:vSett}[view]();
  document.querySelectorAll('.wrap').forEach(w=>w.classList.toggle('wide',view=='week'));
  document.querySelectorAll('.nv[data-x]').forEach(b=>b.setAttribute('aria-current',b.dataset.x==(view=='take'?'quiz':view)));
 }
@@ -688,51 +731,59 @@ function vPlans(){
 }
 
 /* ---------- profile ---------- */
-const AVC=['#F2580A','#B83280','#7A3FC4','#2B6CB0','#2F855A','#B5532B','#D69E2E','#4A5568'];
 const pname=()=>(S.profile&&S.profile.name)||SES.name||SES.u;
 const ini=n=>n.split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
-const avColor=()=>/^#[0-9a-fA-F]{6}$/.test(S.profile.color||'')?S.profile.color:'#F2580A';
 const avHtml=()=>/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(S.profile.img||'')?`<img src="${S.profile.img}" alt="">`:esc(ini(pname()));
 const phNorm=v=>{let d=String(v||'').replace(/\D/g,'');if(d.length==11&&d[0]=='8')d='7'+d.slice(1);if(d.length==10)d='7'+d;return /^7\d{10}$/.test(d)?'+'+d:''};
 const phFmt=v=>{const d=String(v||'').replace(/\D/g,'');return d.length==11?`+7 ${d.slice(1,4)} ${d.slice(4,7)} ${d.slice(7,9)} ${d.slice(9)}`:''};
-function applyProfile(){if(!S||!SES)return;const a=$('#av');a.innerHTML=avHtml();a.style.background=avColor();$('#uname').textContent=pname()}
-function vProf(){const p=S.profile,c=avColor();
- return `<h1>Профиль</h1><div class="pf">
- <div class="pn"><h2>Аватар</h2><div class="pfa"><div class="av big" style="background:${c}">${avHtml()}</div><div>
- <div class="sw" role="group" aria-label="Аватар түсі">${AVC.map(k=>`<button type="button" data-a="pcol" data-x="${k}" style="background:${k}" aria-label="${k}" aria-pressed="${k.toLowerCase()==c.toLowerCase()}"></button>`).join('')}</div>
- <div class="bar2" style="margin-top:10px"><label class="btn ghost sm" for="pf-up" style="cursor:pointer">Фото жүктеу</label><input id="pf-up" type="file" accept="image/png,image/jpeg,image/webp" hidden>${p.img?'<button class="btn ghost sm" data-a="prm">Фотоны өшіру</button>':''}</div>
- <div class="mute" id="pf-m" role="status" style="margin-top:6px">Фото 128×128 өлшемге кішірейтіледі</div></div></div></div>
- <div class="pn"><h2>Жеке мәлімет</h2>
- <label for="pf-l">Логин</label><input id="pf-l" value="${esc(SES.u)}" disabled><div class="mute">Логинді өзгерту мүмкін емес</div>
- <label for="pf-n">Аты</label><input id="pf-n" maxlength="40" value="${esc(pname())}" autocomplete="name">
- <label for="pf-p">Телефон нөмірі</label><input id="pf-p" type="tel" inputmode="tel" placeholder="+7 7XX XXX XX XX" value="${esc(phFmt(p.phone))}" autocomplete="tel">
- <div class="mute">Нөмір парольді қалпына келтіру үшін керек. Оны тек сен және әкімшілік көреді.</div>
- <div class="acts"><button class="btn" data-a="psave">Сақтау</button></div></div>
- <div class="pn"><h2>Қауіпсіздік</h2>
- <label for="pw-o">Қазіргі пароль</label><input id="pw-o" type="password" autocomplete="current-password">
- <label for="pw-n">Жаңа пароль</label><input id="pw-n" type="password" autocomplete="new-password">
+function applyProfile(){if(!S||!SES)return;const h=avHtml();['#av','#wav'].forEach(i=>{const a=$(i);if(a)a.innerHTML=h});$('#uname').textContent=pname();const w=$('#wnm');if(w)w.textContent=pname()}
+let pwOk=null;
+function vProf(){const p=S.profile;
+ const sec=pwOk?`<label for="pw-n">Жаңа пароль</label><input id="pw-n" type="password" autocomplete="new-password">
  <label for="pw-n2">Жаңа парольді қайталау</label><input id="pw-n2" type="password" autocomplete="new-password">
  <div class="err" id="pw-e" role="alert"></div>
- <div class="acts"><button class="btn" data-a="ppass">Парольді ауыстыру</button></div></div></div>`}
+ <div class="acts"><button class="btn" data-a="ppass">Парольді ауыстыру</button><button class="btn ghost" data-a="pcancel">Болдырмау</button></div>`
+ :`<label for="pw-o">Қазіргі пароль</label><input id="pw-o" type="password" autocomplete="current-password">
+ <div class="err" id="pw-e" role="alert"></div>
+ <div class="acts"><button class="btn" data-a="pverify">Растау</button><button class="btn ghost" data-a="psup">Тех поддержка</button></div>`;
+ return `<h1>Профильді өңдеу</h1><div class="pf">
+ <div class="pn"><h2>Аватар</h2><div class="pfa"><div class="av big">${avHtml()}</div><div>
+ <div class="bar2"><label class="btn ghost sm" for="pf-up" style="cursor:pointer">Фото жүктеу</label><input id="pf-up" type="file" accept="image/png,image/jpeg,image/webp" hidden>${p.img?'<button class="btn ghost sm" data-a="prm">Фотоны өшіру</button>':''}</div>
+ <div class="mute" id="pf-m" role="status"></div></div></div></div>
+ <div class="pn"><h2>Жеке мәлімет</h2>
+ <label for="pf-n">Аты</label><input id="pf-n" maxlength="40" value="${esc(pname())}" autocomplete="name">
+ <label for="pf-p">Телефон нөмірі</label><input id="pf-p" type="tel" inputmode="tel" placeholder="+7 7XX XXX XX XX" value="${esc(phFmt(p.phone))}" autocomplete="tel">
+ <div class="acts"><button class="btn" data-a="psave">Сақтау</button></div></div>
+ <div class="pn"><h2>Қауіпсіздік</h2>${sec}</div></div>`}
+function vSett(){const cur=document.documentElement.dataset.theme||'';
+ const o=(v,l)=>`<button data-a="th" data-x="${v}" aria-current="${cur==v}">${l}</button>`;
+ return `<h1>Баптаулар</h1><div class="pf"><div class="pn"><h2>Түнгі / күндізгі режим</h2><div class="seg" role="group" aria-label="Режим">${o('','Автоматты')}${o('light','Күндізгі')}${o('dark','Түнгі')}</div></div></div>`}
 const pfm=t=>{const e=$('#pf-m');if(e)e.textContent=t},pwe=t=>{const e=$('#pw-e');if(e)e.textContent=t};
-async function chPass(b){
- const o=$('#pw-o').value,n=$('#pw-n').value,n2=$('#pw-n2').value;pwe('');
- if(!o)return pwe('Қазіргі парольді жаз');if(n.length<8)return pwe('Жаңа пароль кемінде 8 таңбадан тұруы керек');
- if(n!==n2)return pwe('Парольдер сәйкес емес');if(n===o)return pwe('Жаңа пароль ескісімен бірдей');
+async function pVerify(b){const o=$('#pw-o').value;pwe('');if(!o)return pwe('Қазіргі парольді жаз');b.disabled=true;
+ try{pwOk=await sb('/auth/v1/token?grant_type=password',{method:'POST',body:{email:em(SES.u),password:o}});pwOk.t=Date.now();render()}
+ catch(x){pwOk=null;pwe(x instanceof TypeError?netErr(x):'Қазіргі пароль қате')}finally{b.disabled=false}}
+async function pChange(b){const n=$('#pw-n').value,n2=$('#pw-n2').value;pwe('');
+ if(Date.now()-pwOk.t>6e5){pwOk=null;render();return pwe('Уақыт өтіп кетті, парольді қайта растаңыз')}
+ if(n.length<8)return pwe('Жаңа пароль кемінде 8 таңбадан тұруы керек');if(n!==n2)return pwe('Парольдер сәйкес емес');
  b.disabled=true;
- try{let j;try{j=await sb('/auth/v1/token?grant_type=password',{method:'POST',body:{email:em(SES.u),password:o}})}catch(x){if(x instanceof TypeError)throw x;return pwe('Қазіргі пароль қате')}
-  await sb('/auth/v1/user',{method:'PUT',token:j.access_token,body:{password:n}});setSes(j);
-  ['#pw-o','#pw-n','#pw-n2'].forEach(i=>$(i).value='');toast('Пароль ауыстырылды')}
+ try{await sb('/auth/v1/user',{method:'PUT',token:pwOk.access_token,body:{password:n}});setSes(pwOk);pwOk=null;render();toast('Пароль ауыстырылды')}
  catch(x){pwe(/same/i.test(x.message)?'Жаңа пароль ескісімен бірдей':/password/i.test(x.message)?'Пароль әлсіз: кемінде 8 таңба, кіші және бас әріп, сан керек':netErr(x))}
  finally{b.disabled=false}}
+const wmClose=()=>{const w=$('#wm'),h=document.querySelector('.who');if(w&&!w.hidden){w.hidden=true;h.setAttribute('aria-expanded','false')}};
+document.addEventListener('click',e=>{const w=$('#wm');if(!w)return;const h=e.target.closest('.who');
+ if(h){w.hidden=!w.hidden;h.setAttribute('aria-expanded',String(!w.hidden))}else wmClose()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||!S||!SES)return;const a=b.dataset.a;
- if(a=='pcol'){S.profile.color=b.dataset.x;save();render()}
+ if(a=='nav'&&b.dataset.x!='prof')pwOk=null;if(a=='out')pwOk=null;
+ if(a=='th'){document.documentElement.dataset.theme=b.dataset.x;sv('kbo.theme',b.dataset.x);render()}
  else if(a=='prm'){delete S.profile.img;save();render()}
  else if(a=='psave'){const n=$('#pf-n').value.trim().slice(0,40),raw=$('#pf-p').value.trim(),ph=phNorm(raw);
   if(!n)return toast('Атыңды жаз');if(raw&&!ph)return toast('Нөмір дұрыс емес: +7 7XX XXX XX XX');
   S.profile.name=n;S.profile.phone=ph;save();$('#pf-p').value=phFmt(ph);applyProfile();toast('Сақталды');
   tok().then(t=>sb('/auth/v1/user',{method:'PUT',token:t,body:{data:{name:n}}})).then(()=>{SES.name=n;sv(SBK,SES)}).catch(()=>{})}
- else if(a=='ppass')chPass(b).catch(()=>pwe(EM))});
+ else if(a=='pverify')pVerify(b).catch(()=>pwe(EM))
+ else if(a=='ppass')pChange(b).catch(()=>pwe(EM))
+ else if(a=='pcancel'){pwOk=null;render()}
+ else if(a=='psup')toast('Тех поддержка Telegram боты жақында қосылады')});
 document.addEventListener('change',e=>{if(!S||e.target.id!='pf-up')return;const f=e.target.files[0];e.target.value='';
  if(!f||!/^image\/(png|jpeg|webp)$/.test(f.type))return pfm('PNG, JPG немесе WebP сурет таңда');if(f.size>8e6)return pfm('Сурет тым үлкен (8 МБ дейін)');
  const fr=new FileReader();fr.onerror=()=>pfm('Суретті оқи алмадым');
@@ -740,7 +791,8 @@ document.addEventListener('change',e=>{if(!S||e.target.id!='pf-up')return;const 
   im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=128;const s=Math.min(im.width,im.height);
    c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,128,128);S.profile.img=c.toDataURL('image/jpeg',.82);save();render()};im.src=fr.result};
  fr.readAsDataURL(f)});
-document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.classList&&e.target.classList.contains('who'))e.target.click()});
+document.getElementById('dlg').addEventListener('cancel',()=>{fdel(dNew);dNew=[];dDel=[]});
+document.addEventListener('keydown',e=>{if(e.key=='Escape')wmClose();if(e.key=='Enter'&&e.target.classList&&e.target.classList.contains('who'))e.target.click()});
 
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
